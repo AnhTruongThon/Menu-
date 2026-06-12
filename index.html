@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Món Quán Ăn</title>
+    <title>Đặt Món Anh Trưởng Thôn</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
         h1, h2 { color: #d35400; text-align: center; }
@@ -62,12 +62,33 @@
             document.getElementById('total-price').textContent = total.toLocaleString();
         }
 
-        function checkout() {
+       function checkout() {
             if (cart.length === 0) {
-                alert("Giỏ hàng đang trống!");
+                alert("Giỏ hàng đang trống! Bạn hãy chọn món trước nhé.");
                 return;
             }
-            alert("Cảm ơn bạn đã đặt hàng! Tổng thanh toán là: " + total.toLocaleString() + " VNĐ. Tính năng gửi đơn hàng tới chủ quán cần kết nối máy chủ để hoạt động.");
+
+            // 1. Tạo nội dung tin nhắn đơn hàng
+            let orderText = "Chào quán, tôi muốn đặt các món sau:\n\n";
+            cart.forEach(item => {
+                orderText += "▪️ " + item.name + "\n";
+            });
+            orderText += "\nTổng thanh toán: " + total.toLocaleString() + " VNĐ\n";
+            orderText += "Vui lòng giao đến địa chỉ: ...";
+
+            // 2. Tự động sao chép (copy) nội dung đơn hàng
+            navigator.clipboard.writeText(orderText).then(() => {
+                alert("ĐÃ SAO CHÉP ĐƠN HÀNG!\n\nSau khi bấm OK, ứng dụng Zalo sẽ mở ra. Bạn chỉ cần bấm 'DÁN' (Paste) vào khung chat để gửi đơn cho quán nhé.");
+                
+                // 3. Chuyển hướng sang Zalo (THAY SỐ ZALO CỦA BẠN VÀO ĐÂY)
+                let zaloNumber = "0342358549"; // Nhập số điện thoại Zalo của quán
+                window.location.href = "https://zalo.me/" + zaloNumber;
+                
+            }).catch(err => {
+                // Đề phòng thiết bị của khách chặn tính năng copy tự động
+                alert("Hệ thống chưa thể copy tự động. Bạn vui lòng chụp ảnh màn hình giỏ hàng này và gửi qua Zalo số 0342358549 nhé!");
+                window.location.href = "https://zalo.me/";
+            });
         }
     </script>
 </body>
