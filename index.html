@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt Món Anh Trưởng Thôn</title>
+    <title>Đặt Món Quán Ăn</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
         h1, h2 { color: #d35400; text-align: center; }
@@ -18,6 +18,7 @@
 
     <h1>Thực Đơn Của Quán</h1>
     
+    <!-- Món ăn 1 -->
     <div class="menu-item">
         <div>
             <h3>Cơm Tấm Sườn Bì Chả</h3>
@@ -26,6 +27,7 @@
         <button onclick="addToCart('Cơm Tấm Sườn Bì Chả', 45000)">Thêm vào giỏ</button>
     </div>
 
+    <!-- Món ăn 2 -->
     <div class="menu-item">
         <div>
             <h3>Phở Bò Tái Nạm</h3>
@@ -62,23 +64,21 @@
             document.getElementById('total-price').textContent = total.toLocaleString();
         }
 
-       function checkout() {
+        function checkout() {
             if (cart.length === 0) {
                 alert("Giỏ hàng đang trống! Bạn hãy chọn món trước nhé.");
                 return;
             }
 
-            // Lấy thêm thông tin khách hàng để quán biết giao đi đâu
             let customerName = prompt("Vui lòng nhập TÊN của bạn:");
-            if (!customerName) return; // Nếu khách bấm Hủy thì dừng lại
+            if (!customerName) return; 
 
             let customerPhone = prompt("Vui lòng nhập SỐ ĐIỆN THOẠI và ĐỊA CHỈ giao hàng:");
             if (!customerPhone) return;
 
-            // 1. Soạn nội dung tin nhắn gửi về Telegram
             let orderText = "🚨 CÓ ĐƠN HÀNG MỚI!\n\n";
             orderText += "👤 Khách hàng: " + customerName + "\n";
-            orderText += "📞 Thông tin/Địa chỉ: " + customerPhone + "\n\n";
+            orderText += "📞 Thông tin: " + customerPhone + "\n\n";
             orderText += "📋 DANH SÁCH MÓN:\n";
             
             cart.forEach(item => {
@@ -87,13 +87,12 @@
             
             orderText += "\n💰 Tổng tiền: " + total.toLocaleString() + " VNĐ";
 
-            // 2. Điền Token và Chat ID của bạn vào đây
+            // BẠN CHỈ CẦN THAY 2 DÒNG DƯỚI ĐÂY:
             const TOKEN = "8690982170:AAHaKB3dKj9IW0I0MXqHDF88vvK-aQ7FK8o";
             const CHAT_ID = "7403980630";
             
             const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
-            // 3. Hệ thống tự động gửi tin nhắn ngầm
             fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -105,15 +104,17 @@
             .then(response => {
                 if (response.ok) {
                     alert("✅ Đặt hàng thành công! Quán sẽ sớm liên hệ để giao món cho bạn.");
-                    // Xóa giỏ hàng sau khi đặt thành công
                     cart = [];
                     total = 0;
                     updateCartUI();
                 } else {
-                    alert("❌ Có lỗi xảy ra, không thể gửi đơn hàng. Vui lòng thử lại!");
+                    alert("❌ Có lỗi xảy ra, không thể gửi đơn hàng. Vui lòng kiểm tra lại Token và Chat ID.");
                 }
             })
             .catch(error => {
                 alert("❌ Lỗi mạng. Vui lòng kiểm tra lại kết nối internet!");
             });
         }
+    </script>
+</body>
+</html>
