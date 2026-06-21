@@ -68,28 +68,52 @@
                 return;
             }
 
-            // 1. Tạo nội dung tin nhắn đơn hàng
-            let orderText = "Chào quán, tôi muốn đặt các món sau:\n\n";
+            // Lấy thêm thông tin khách hàng để quán biết giao đi đâu
+            let customerName = prompt("Vui lòng nhập TÊN của bạn:");
+            if (!customerName) return; // Nếu khách bấm Hủy thì dừng lại
+
+            let customerPhone = prompt("Vui lòng nhập SỐ ĐIỆN THOẠI và ĐỊA CHỈ giao hàng:");
+            if (!customerPhone) return;
+
+            // 1. Soạn nội dung tin nhắn gửi về Telegram
+            let orderText = "🚨 CÓ ĐƠN HÀNG MỚI!\n\n";
+            orderText += "👤 Khách hàng: " + customerName + "\n";
+            orderText += "📞 Thông tin/Địa chỉ: " + customerPhone + "\n\n";
+            orderText += "📋 DANH SÁCH MÓN:\n";
+            
             cart.forEach(item => {
                 orderText += "▪️ " + item.name + "\n";
             });
-            orderText += "\nTổng thanh toán: " + total.toLocaleString() + " VNĐ\n";
-            orderText += "Vui lòng giao đến địa chỉ: ...";
+            
+            orderText += "\n💰 Tổng tiền: " + total.toLocaleString() + " VNĐ";
 
-            // 2. Tự động sao chép (copy) nội dung đơn hàng
-            navigator.clipboard.writeText(orderText).then(() => {
-                alert("ĐÃ SAO CHÉP ĐƠN HÀNG!\n\nSau khi bấm OK, ứng dụng Zalo sẽ mở ra. Bạn chỉ cần bấm 'DÁN' (Paste) vào khung chat để gửi đơn cho quán nhé.");
-                
-                // 3. Chuyển hướng sang Zalo (THAY SỐ ZALO CỦA BẠN VÀO ĐÂY)
-                let zaloNumber = "0342358549"; // Nhập số điện thoại Zalo của quán
-                window.location.href = "https://zalo.me/" + zaloNumber;
-                
-            }).catch(err => {
-                // Đề phòng thiết bị của khách chặn tính năng copy tự động
-                alert("Hệ thống chưa thể copy tự động. Bạn vui lòng chụp ảnh màn hình giỏ hàng này và gửi qua Zalo số 0342358549 nhé!");
-                window.location.href = "https://zalo.me/";
+            // 2. Điền Token và Chat ID của bạn vào đây
+            const TOKEN = "ĐIỀN_TOKEN_CỦA_BẠN_VÀO_ĐÂY";
+            const CHAT_ID = "ĐIỀN_CHAT_ID_CỦA_BẠN_VÀO_ĐÂY";
+            
+            const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+            // 3. Hệ thống tự động gửi tin nhắn ngầm
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: orderText
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("✅ Đặt hàng thành công! Quán sẽ sớm liên hệ để giao món cho bạn.");
+                    // Xóa giỏ hàng sau khi đặt thành công
+                    cart = [];
+                    total = 0;
+                    updateCartUI();
+                } else {
+                    alert("❌ Có lỗi xảy ra, không thể gửi đơn hàng. Vui lòng thử lại!");
+                }
+            })
+            .catch(error => {
+                alert("❌ Lỗi mạng. Vui lòng kiểm tra lại kết nối internet!");
             });
         }
-    </script>
-</body>
-</html>
