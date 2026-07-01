@@ -43,7 +43,7 @@
         <button onclick="checkout()">Đặt Hàng Ngay</button>
     </div>
 
-    <script>
+   <script>
         let cart = [];
         let total = 0;
 
@@ -81,13 +81,25 @@
             orderText += "📞 Thông tin: " + customerPhone + "\n\n";
             orderText += "📋 DANH SÁCH MÓN:\n";
             
+            // --- ĐOẠN GOM CÁC MÓN TRÙNG NHAU THÀNH SỐ LƯỢNG ---
+            let itemCounts = {};
             cart.forEach(item => {
-                orderText += "▪️ " + item.name + "\n";
+                if (itemCounts[item.name]) {
+                    itemCounts[item.name]++;
+                } else {
+                    itemCounts[item.name] = 1;
+                }
             });
+
+            // Tạo dòng chữ hiển thị dạng: Tên món xSố lượng
+            for (let name in itemCounts) {
+                orderText += "▪️ " + name + " x" + itemCounts[name] + "\n";
+            }
+            // --------------------------------------------------
             
             orderText += "\n💰 Tổng tiền: " + total.toLocaleString() + " VNĐ";
 
-            // BẠN CHỈ CẦN THAY 2 DÒNG DƯỚI ĐÂY:
+            // LƯU Ý: ĐIỀN LẠI TOKEN VÀ CHAT ID ĐANG HOẠT ĐỘNG CỦA BẠN VÀO ĐÂY
             const TOKEN = "8960241636:AAEulEjWAX0lt0J5_r4cAOQPWbN633kz_YM";
             const CHAT_ID = "7403980630";
             
@@ -116,5 +128,3 @@
             });
         }
     </script>
-</body>
-</html>
